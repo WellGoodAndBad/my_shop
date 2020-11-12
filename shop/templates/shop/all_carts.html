@@ -1,0 +1,18 @@
+
+{% extends 'basic_page.html' %}
+
+{% block content %}
+
+    <main role="main" class="container">
+        {% for cart in carts %}
+              <div class="jumbotron">
+                <p>owner: {{ cart.owner.email }}</p>
+                <a class="btn btn-lg btn-primary" href="{% url 'shop:mycart' id=cart.owner.id %}" role="button">see cart</a>
+
+              </div>
+
+        {% endfor %}
+    </main>
+
+
+{% endblock %}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>My test Blog</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+        <h5 class="navbar-brand">Test Django</h5>
+
+
+    {% if user.is_authenticated %}
+        <span class="navbar-brand"> {{ user.email }} </span>
+        <a class="btn btn-outline-primary" href="{% url 'shop:mycart' user.id %}">Моя корзина</a>
+        <a class="btn btn-outline-primary" href="{% url 'users:logout' %}">Выход</a>
+        {% if user.role == 'manager' %}
+            <a class="btn btn-outline-primary" href="{% url 'shop:all_carts' %}">Все корзины</a>
+        {% endif %}
+    {% else %}
+        <a class="btn btn-outline-primary" href="{% url 'users:registration' %}">Регистраця</a>
+
+        <a class="btn btn-outline-primary" href="{% url 'users:login' %}">Вход</a>
+    {% endif %}
+
+        <a class="btn btn-outline-primary float-right" href="{% url 'shop:get_data' %}">GET DATA</a>
+
+    </nav>
+
+
+    {% block content %}
+    {% endblock %}
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script>window.jQuery || document.write('<script src="/docs/4.5/assets/js/vendor/jquery.slim.min.js"><\/script>')</script>
+    <script src="/docs/4.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-1CmrxMRARb6aLqgBO7yyAxTOQE2AKb9GfXnEo760AUcUmFx3ibVJJAzGytlQcNXd" crossorigin="anonymous"></script>
+
+</body>
+</html>

@@ -1,0 +1,12 @@
+
+{% extends "basic_page.html" %}
+
+{% block content %}
+    <div class="jimbotron">
+        <form method="post" action="{% url 'users:registration' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button name="submit">register</button>
+        </form>
+    </div>
+{% endblock content %}

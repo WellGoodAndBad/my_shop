@@ -1,0 +1,21 @@
+
+{% extends 'basic_page.html' %}
+
+{% block content %}
+
+    <main role="main" class="container">
+        <h1>MY SHOP</h1>
+        {% for si in shop_items %}
+              <div class="jumbotron">
+                <p>title: {{ si.name_item }}</p>
+                <p class="lead">price: {{si.shop_price }}</p>
+                  {% if user.is_authenticated %}
+                    <a class="btn btn-lg btn-primary" href="{% url 'shop:add_to_cart' id=user.id item_shop=si.id %}" role="button">add to cart</a>
+                  {% endif %}
+              </div>
+
+        {% endfor %}
+    </main>
+
+
+{% endblock %}
