@@ -2,6 +2,9 @@
 {% extends 'basic_page.html' %}
 
 {% block content %}
+    <div id="container" style="height: 50%; width: 50%; margin-left: 20%;">
+        <canvas id="pie-chart"></canvas>
+    </div>
 
     <main role="main" class="container">
         <h1>MY SHOP</h1>
@@ -17,5 +20,29 @@
         {% endfor %}
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <script>
+
+        var config = {
+          type: 'bar',
+          data: {
+            datasets: [{
+              data: [{% for si in shop_items %}'{{ si.shop_price }}', {% endfor %}],
+              backgroundColor: 'green',
+              label: 'Price items'
+            }],
+            labels: [{% for si in shop_items %}'{{ si.name_item }}', {% endfor %}],
+          },
+          options: {
+            responsive: true,
+          }
+        };
+
+        window.onload = function() {
+          var ctx = document.getElementById('pie-chart').getContext('2d');
+          window.myPie = new Chart(ctx, config);
+        };
+
+    </script>
 
 {% endblock %}

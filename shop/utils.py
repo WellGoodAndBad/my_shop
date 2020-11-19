@@ -5,6 +5,10 @@ from django.conf import settings
 from django.db import transaction
 import pandas as pd
 import pdfkit, os
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 class DataDowloader:
@@ -41,7 +45,7 @@ class DataDowloader:
                 ItemShop.objects.bulk_create(rows_for_ins)
 
         except:
-            print(traceback.format_exc())
+            logger.error(str(traceback.format_exc()))
 
     def get_data(self, url):
         try:
@@ -49,34 +53,41 @@ class DataDowloader:
             if response.status_code == 404:
                 return
             if response.status_code != 200:
-                raise ValueError('Request to {} responded with status {}'.format(url, response.status_code))
+                err_msg = 'Request to {} responded with status {}'.format(url, response.status_code)
+                logger.error(err_msg)
+                raise ValueError(err_msg)
             else:
                 return response.content
         except Exception:
-            raise Exception('Error in getting html\n'+str(traceback.format_exc()))
+            err_msg = 'Error in getting html\n'+str(traceback.format_exc())
+            logger.error(err_msg)
+            raise Exception(err_msg)
 
 
 def create_pdf(user_id, item_shop):
 
-    user = User.objects.get(pk=user_id)
-    user_cart = UserCart.objects.get(owner=user)
+    try:
+        user = User.objects.get(pk=user_id)
+        user_cart = UserCart.objects.get(owner=user)
 
-    body = f"""
-        <html>
-          <head>
-            <meta charset="utf-8">
-            <meta name="pdfkit-page-size" content="Legal"/>
-            <meta name="pdfkit-orientation" content="Landscape"/>
-          </head>
-          %s
-          </html>
-        """
+        body = f"""
+            <html>
+              <head>
+                <meta charset="utf-8">
+                <meta name="pdfkit-page-size" content="Legal"/>
+                <meta name="pdfkit-orientation" content="Landscape"/>
+              </head>
+              %s
+              </html>
+            """
 
-    # счет номер заказа в задаче ничего нет особенно, ормирую его из id
-    str_for_pdf = f'''<p>Клиент: {user_cart.owner.full_name}</p>
-                      <p>Номер заказа: {user_cart.id}{user_cart.owner.id}</p>
-                      <p>Адрес доставки: {user_cart.owner.delivery_address}</p>'''
+        # счет номер заказа в задаче ничего нет особенно, ормирую его из id
+        str_for_pdf = f'''<p>Клиент: {user_cart.owner.full_name}</p>
+                          <p>Номер заказа: {user_cart.id}{user_cart.owner.id}</p>
+                          <p>Адрес доставки: {user_cart.owner.delivery_address}</p>'''
 
-    if not os.path.exists('pdf_docs'):
-        os.makedirs('pdf_docs')
-    pdfkit.from_string(body % str_for_pdf, f'pdf_docs/{user_cart.id}.pdf')
+        if not os.path.exists('pdf_docs'):
+            os.makedirs('pdf_docs')
+        pdfkit.from_string(body % str_for_pdf, f'pdf_docs/{user_cart.id}.pdf')
+    except:
+        logger.error(str(traceback.format_exc()))
